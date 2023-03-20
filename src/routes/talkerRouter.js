@@ -1,5 +1,11 @@
 const express = require('express');
-const { getAllTalkers } = require('../utils/fs/index');
+const { getAllTalkers, addTalker } = require('../utils/fs/index');
+const validateAge = require('../middlewares/validateAge');
+const validateName = require('../middlewares/validateName');
+const validateRate = require('../middlewares/validateRate');
+const validateTalk = require('../middlewares/validateTalk');
+const validateToken = require('../middlewares/validateToken');
+const validateWatchedAt = require('../middlewares/validateWatchedAt');
 
 const router = express.Router();
 
@@ -23,5 +29,22 @@ router.get('/:id', async (req, res) => {
   
   return res.status(200).json(talker);
 });
+
+router.post('/',
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateRate,
+  validateWatchedAt,
+  async (req, res) => {
+    const { name, age, talk: { watchedAt, rate } } = req.body;
+
+    const newTalker = await addTalker({
+        name, age, talk: { watchedAt, rate },
+    });
+
+    return res.status(201).json(newTalker);
+  });
 
 module.exports = router;
