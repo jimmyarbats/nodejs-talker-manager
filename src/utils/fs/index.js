@@ -28,7 +28,24 @@ const addTalker = async (talker) => {
   return newTalker;
 };
 
+const updateTalker = async (id, { name, age, talk }) => {
+  const data = await getAllTalkers();
+  
+  if (!data.some((talker) => talker.id === id)) {
+    return false;
+  }
+  
+  const updData = data.map((talker) => ((talker.id === id)
+    ? { id, name, age, talk }
+    : talker));
+
+  await writeFileTalker(updData);
+  
+  return { id, name, age, talk };
+};
+
 module.exports = {
   getAllTalkers,
   addTalker,
+  updateTalker,
 };
