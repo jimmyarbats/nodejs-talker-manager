@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllTalkers, addTalker, updateTalker } = require('../utils/fs/index');
+const { getAllTalkers, addTalker, updateTalker, deleteTalker } = require('../utils/fs/index');
 const validateAge = require('../middlewares/validateAge');
 const validateName = require('../middlewares/validateName');
 const validateRate = require('../middlewares/validateRate');
@@ -65,5 +65,15 @@ router.put('/:id',
     }
     return res.status(200).json(updTalker);
   });
+
+router.delete('/:id', validateToken, async (req, res) => {
+  const { id } = req.params;
+  const dltTalker = await deleteTalker(Number(id));
+  
+  if (!dltTalker) {
+    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  }
+  return res.status(204).json();
+});
 
 module.exports = router;
